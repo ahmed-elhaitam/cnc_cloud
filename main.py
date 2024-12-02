@@ -22,7 +22,9 @@ formations = [
     {"Nom": "Génie Informatique", "Etablissement": "EMI", "Débouchés": "Ingénieur logiciel, Data Scientist"},
     {"Nom": "Génie Civil", "Etablissement": "EHTP", "Débouchés": "Chef de projet, Consultant en BTP"}
 ]
-for formation in formations:
+
+for i, formation in enumerate(formations):
     st.write(f"**{formation['Nom']}** - {formation['Etablissement']}")
     st.write(f"Débouchés : {formation['Débouchés']}")
-    st.button("Voir plus")
+    if st.button(f"Voir plus {i}"):  # Bouton unique basé sur l'index
+        st.write(f"Vous avez sélectionné : {formation['Nom']}")
