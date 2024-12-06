@@ -16,7 +16,7 @@ def search_by_keyword(df, keyword):
     keyword = keyword.lower()
     
     # Rechercher dans les colonnes binaires
-    binary_columns = [col for col in df.columns if col not in ['Institution', 'Formation', 'Débouchés', 'Preprocessed Debouches']]
+    binary_columns = [col for col in df.columns if col not in ['Institution', 'Formation', 'Debouches', 'Preprocessed Debouches']]
     
     # Colonnes où le mot-clé est présent
     matching_columns = [col for col in binary_columns if keyword in col.lower()]
@@ -24,7 +24,7 @@ def search_by_keyword(df, keyword):
     # Filtrer les lignes où ces colonnes sont à 1
     if matching_columns:
         results = df[df[matching_columns].eq(1).any(axis=1)]
-        return results[['Institution', 'Formation', 'Débouchés']]
+        return results[['Institution', 'Formation', 'Debouches']]
     else:
         return pd.DataFrame(columns=['Institution', 'Formation', 'Débouchés'])
 
