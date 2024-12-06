@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Charger le dataset
-df = pd.read_csv('votre_dataset.csv')  # Remplacez par le chemin de votre fichier
+df = pd.read_csv('formation.csv')  # Remplacez par le chemin de votre fichier
 
 def recherche_formations(mot_cle):
     """
