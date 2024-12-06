@@ -24,9 +24,9 @@ def search_by_keyword(df, keyword):
     # Filtrer les lignes où ces colonnes sont à 1
     if matching_columns:
         results = df[df[matching_columns].eq(1).any(axis=1)]
-        return results[['Institution', 'Formation', 'Debouches']]
+        return results[['Institution', 'Formation']]
     else:
-        return pd.DataFrame(columns=['Institution', 'Formation', 'Débouchés'])
+        return pd.DataFrame(columns=['Institution', 'Formation'])
 
 def main():
     # Titre de l'application
