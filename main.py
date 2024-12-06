@@ -12,27 +12,11 @@ headers = {
     "Authorization": f"Bearer {API_KEY}"
 }
 
-# Fonction pour appeler l'API avec toutes les données
-def call_azure_api():
+# Fonction pour appeler l'API Azure
+def call_azure_api(keyword):
     input_data = {
         "Inputs": {
-            "input1": [
-                {
-                    "Institution": "AIAC",
-                    "Formation": "Génie Informatique",
-                    "Debouches": "Software Developer, Data Engineer"
-                },
-                {
-                    "Institution": "EHTP",
-                    "Formation": "Big Data",
-                    "Debouches": "Data Analyst, Data Scientist"
-                },
-                {
-                    "Institution": "EMI",
-                    "Formation": "Génie Électrique",
-                    "Debouches": "Electrical Engineer, Cloud Architect"
-                }
-            ]
+            "input1": [{"Keyword": keyword}]
         },
         "GlobalParameters": {}
     }
@@ -43,31 +27,31 @@ def call_azure_api():
     except requests.exceptions.RequestException as e:
         return {"error": str(e)}
 
-# Fonction pour filtrer les résultats contenant un mot-clé
-def filter_results(data, keyword):
+# Fonction pour filtrer les formations ayant le mot-clé
+def filter_results(data):
+    # Convertir les résultats en DataFrame
     df = pd.DataFrame(data)
-    filtered_df = df[df["Debouches"].str.contains(keyword, case=False, na=False)]
-    return filtered_df
+    return df
 
 # Interface utilisateur Streamlit
 st.title("Recherche de Formations par Mot-clé")
 st.markdown("Entrez un mot-clé pour trouver les formations pertinentes.")
 
 # Entrée utilisateur
-user_input = st.text_input("Entrez un mot-clé (exemple : data)")
+user_input = st.text_input("Entrez un mot-clé (exemple : data, cloud, AI, etc.)")
 
 if st.button("Rechercher"):
     if user_input:
         st.write(f"**Mot-clé saisi :** {user_input}")
         with st.spinner("Recherche en cours..."):
-            # Appeler l'API pour obtenir toutes les formations
-            results = call_azure_api()
+            # Appeler l'API Azure
+            results = call_azure_api(user_input)
             if "error" not in results:
-                # Récupérer les résultats bruts
+                # Récupérer les résultats retournés par l'API
                 data = results.get("Results", {}).get("output1", [])
                 if data:
-                    # Filtrer les résultats pour le mot-clé
-                    filtered_df = filter_results(data, user_input)
+                    # Filtrer et afficher les formations
+                    filtered_df = filter_results(data)
                     if not filtered_df.empty:
                         st.success("Formations pertinentes trouvées :")
                         st.dataframe(filtered_df)
