@@ -13,7 +13,7 @@ def search_by_keyword(df, keyword):
         pd.DataFrame: Formations correspondantes
     """
     # Vérifier si les colonnes nécessaires sont présentes
-    required_columns = ['Institution', 'Formation', 'Debouches']
+    required_columns = ['Institution', 'Formation']
     if not all(col in df.columns for col in required_columns):
         st.error(f"Les colonnes nécessaires sont manquantes. Colonnes attendues : {required_columns}")
         return pd.DataFrame()
@@ -22,7 +22,7 @@ def search_by_keyword(df, keyword):
     keyword = keyword.lower()
     
     # Rechercher dans les colonnes binaires
-    binary_columns = [col for col in df.columns if col not in required_columns + ['Preprocessed Debouches']]
+    binary_columns = [col for col in df.columns if col not in required_columns + ['Preprocessed Debouches', 'Débouchés']]
     
     # Colonnes où le mot-clé est présent
     matching_columns = [col for col in binary_columns if keyword in col.lower()]
@@ -46,8 +46,6 @@ def main():
     # Charger les données
     try:
         df = load_data()
-        # Commenté pour éviter l'affichage inutile
-        # st.write("Colonnes disponibles dans le DataFrame :", df.columns.tolist())
     except Exception as e:
         st.error(f"Erreur de chargement des données : {e}")
         return
