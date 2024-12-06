@@ -18,24 +18,37 @@ def search_by_keyword(df, keyword):
     # Rechercher dans les colonnes binaires
     binary_columns = [col for col in df.columns if col not in ['Institution', 'Formation', 'Débouchés', 'Preprocessed Debouches']]
     
-    # Filtrer les lignes où le mot-clé a une colonne binaire à 1
-    results = df[df[binary_columns].eq(1).any(axis=1)]
-    results = results[results[binary_columns].columns[results[binary_columns].eq(1).any()].str.contains(keyword, case=False)]
+    # Colonnes où le mot-clé est présent
+    matching_columns = [col for col in binary_columns if keyword in col.lower()]
     
-    return results[['Institution', 'Formation', 'Débouchés']]
+    # Filtrer les lignes où ces colonnes sont à 1
+    if matching_columns:
+        results = df[df[matching_columns].eq(1).any(axis=1)]
+        return results[['Institution', 'Formation', 'Débouchés']]
+    else:
+        return pd.DataFrame(columns=['Institution', 'Formation', 'Débouchés'])
 
 def main():
     # Titre de l'application
     st.title("🔍 Recherche de Formations par Mot-Clé")
     
-    # Charger les données (intégrées dans le code)
+    # Charger les données
     @st.cache_data
     def load_data():
-        # Remplacez ceci par votre méthode de chargement de données
-        data = pd.read_csv('formation.csv')  # À remplacer
-        return data
+        # Charger directement depuis le chemin du fichier
+        return pd.read_csv('formation.csv')  # Remplacez par le chemin réel
     
-    df = load_data()
+    # Gérer les erreurs de chargement
+    try:
+        df = load_data()
+    except Exception as e:
+        st.error(f"Erreur de chargement des données : {e}")
+        return
+    
+    # Informations sur le dataset
+    st.sidebar.header("Informations du Dataset")
+    st.sidebar.write(f"Nombre total de formations : {len(df)}")
+    st.sidebar.write(f"Colonnes disponibles : {', '.join(df.columns)}")
     
     # Champ de saisie pour le mot-clé
     st.sidebar.header("Recherche de Formations")
