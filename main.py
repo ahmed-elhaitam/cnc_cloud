@@ -35,14 +35,22 @@ def main():
     # Charger les données
     @st.cache_data
     def load_data():
-        # Charger directement depuis le chemin du fichier
-        return pd.read_csv('formation.csv')  # Remplacez par le chemin réel
-    
-    # Gérer les erreurs de chargement
-    try:
-        df = load_data()
-    except Exception as e:
-        st.error(f"Erreur de chargement des données : {e}")
+        """
+        Charger les données depuis un fichier CSV
+        """
+        # Remplacez 'formation.csv' par le chemin réel de votre fichier CSV
+        try:
+            return pd.read_csv('formation.csv')
+        except FileNotFoundError:
+            st.error("Le fichier 'formation.csv' est introuvable. Veuillez vérifier le chemin.")
+            return pd.DataFrame(columns=['Institution', 'Formation', 'Débouchés', 'Preprocessed Debouches'])
+
+    # Charger les données
+    df = load_data()
+
+    # Vérifier si le DataFrame est vide
+    if df.empty:
+        st.error("Le dataset est vide ou introuvable. Veuillez vérifier votre fichier.")
         return
     
     # Informations sur le dataset
@@ -62,19 +70,19 @@ def main():
             
             # Afficher les résultats
             if not results.empty:
-                st.success(f"✅ {len(results)} formation(s) trouvée(s)")
+                st.success(f"✅ {len(results)} formation(s) trouvée(s) pour le mot-clé '{keyword}'")
                 st.dataframe(results)
             else:
-                st.warning("❌ Aucune formation trouvée pour ce mot-clé")
+                st.warning(f"❌ Aucune formation trouvée pour le mot-clé '{keyword}'")
         else:
             st.warning("Veuillez saisir un mot-clé")
     
     # Section informative
     st.sidebar.info("""
     ### Comment utiliser l'application
-    - Saisissez un mot-clé dans le champ de recherche
-    - La recherche se fait sur les colonnes binaires prétraitées
-    - Les résultats sont affichés en temps réel
+    - Saisissez un mot-clé dans le champ de recherche.
+    - La recherche se fait sur les colonnes binaires prétraitées.
+    - Les résultats sont affichés en temps réel dans la fenêtre principale.
     """)
 
 # Exécuter l'application
