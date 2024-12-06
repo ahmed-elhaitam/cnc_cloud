@@ -12,11 +12,17 @@ def search_by_keyword(df, keyword):
     Returns:
         pd.DataFrame: Formations correspondantes
     """
+    # Vérifier si les colonnes nécessaires sont présentes
+    required_columns = ['Institution', 'Formation', 'Debouches']
+    if not all(col in df.columns for col in required_columns):
+        st.error(f"Les colonnes nécessaires sont manquantes. Colonnes attendues : {required_columns}")
+        return pd.DataFrame()
+
     # Convertir le mot-clé en minuscules
     keyword = keyword.lower()
     
     # Rechercher dans les colonnes binaires
-    binary_columns = [col for col in df.columns if col not in ['Institution', 'Formation', 'Debouches', 'Preprocessed Debouches']]
+    binary_columns = [col for col in df.columns if col not in required_columns + ['Preprocessed Debouches']]
     
     # Colonnes où le mot-clé est présent
     matching_columns = [col for col in binary_columns if keyword in col.lower()]
@@ -24,9 +30,9 @@ def search_by_keyword(df, keyword):
     # Filtrer les lignes où ces colonnes sont à 1
     if matching_columns:
         results = df[df[matching_columns].eq(1).any(axis=1)]
-        return results[['Institution', 'Formation']]
+        return results[required_columns]
     else:
-        return pd.DataFrame(columns=['Institution', 'Formation'])
+        return pd.DataFrame(columns=required_columns)
 
 def main():
     # Titre de l'application
@@ -40,7 +46,8 @@ def main():
     # Charger les données
     try:
         df = load_data()
-        st.write("Colonnes disponibles dans le DataFrame :", df.columns.tolist())
+        # Commenté pour éviter l'affichage inutile
+        # st.write("Colonnes disponibles dans le DataFrame :", df.columns.tolist())
     except Exception as e:
         st.error(f"Erreur de chargement des données : {e}")
         return
