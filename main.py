@@ -1,11 +1,11 @@
 import streamlit as st
 import requests
 
-# URL et clé API
+# Configuration du point de terminaison Azure
 ENDPOINT_URL = "http://efaf59fc-4db7-4538-8e15-427a1132bcfa.francecentral.azurecontainer.io/score"
-API_KEY = "XD5TD2k91k03Fbr1jK6jskmTrXM4OzLN"
+API_KEY = "XD5TD2k91k03Fbr1jK6jskmTrXM4OzLN"  # Remplacez par votre clé API
 
-# Configuration des en-têtes
+# Configuration des en-têtes pour l'API
 headers = {
     "Content-Type": "application/json",
     "Authorization": f"Bearer {API_KEY}"
@@ -22,7 +22,7 @@ def call_azure_api(data):
 
 # Interface utilisateur Streamlit
 st.title("Recommandation de Formations")
-st.markdown("Entrez un mot-clé ou une description pour recevoir des recommandations.")
+st.markdown("Entrez un mot-clé pour obtenir des recommandations de formations basées sur vos besoins.")
 
 # Entrée utilisateur
 user_input = st.text_input("Entrez un mot-clé ou une description (exemple : Data Scientist)")
@@ -33,7 +33,9 @@ if st.button("Rechercher"):
         # Préparer les données pour l'API
         input_data = {
             "Inputs": {
-                "WebServiceInput": [{"Keyword": user_input}]
+                "WebServiceInput": [
+                    {"Keyword": user_input}
+                ]
             }
         }
 
@@ -41,7 +43,7 @@ if st.button("Rechercher"):
         st.json(input_data)
 
         # Appeler l'API et afficher les résultats
-        with st.spinner("Chargement..."):
+        with st.spinner("Chargement des recommandations..."):
             results = call_azure_api(input_data)
             if "error" not in results:
                 st.success("Voici les résultats :")
