@@ -1,26 +1,4 @@
 import streamlit as st
-import mysql.connector
-
-# Fonction pour se connecter à la base de données
-def connect_to_database():
-    connection = mysql.connector.connect(
-        host="34.163.145.6",  # Remplacez par l'adresse IP publique de votre instance Cloud SQL
-        user="root",          # Remplacez par votre utilisateur MySQL
-        password="12345",  # Remplacez par votre mot de passe MySQL
-        database="CNC-DB"     # Remplacez par le nom de votre base de données
-    )
-    return connection
-
-# Fonction pour insérer les données dans la table
-def insert_user(connection, nom, prenom, gmail, password):
-    cursor = connection.cursor()
-    query = """
-    INSERT INTO utilisateurs (nom, prenom, gmail, password)
-    VALUES (%s, %s, %s, %s)
-    """
-    cursor.execute(query, (nom, prenom, gmail, password))
-    connection.commit()
-    cursor.close()
 
 # Titre de l'application
 st.title("Application d'inscription des utilisateurs")
