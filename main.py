@@ -35,40 +35,23 @@ def main():
     # Charger les données
     @st.cache_data
     def load_data():
-        """
-        Charger les données depuis un fichier CSV
-        """
-        # Remplacez 'formation.csv' par le chemin réel de votre fichier CSV
-        try:
-            return pd.read_csv('formation.csv')
-        except FileNotFoundError:
-            st.error("Le fichier 'formation.csv' est introuvable. Veuillez vérifier le chemin.")
-            return pd.DataFrame(columns=['Institution', 'Formation', 'Débouchés', 'Preprocessed Debouches'])
-
+        return pd.read_csv('formation.csv')  # Remplacez par le chemin réel du fichier
+    
     # Charger les données
-    df = load_data()
-
-    # Vérifier si le DataFrame est vide
-    if df.empty:
-        st.error("Le dataset est vide ou introuvable. Veuillez vérifier votre fichier.")
+    try:
+        df = load_data()
+        st.write("Colonnes disponibles dans le DataFrame :", df.columns.tolist())
+    except Exception as e:
+        st.error(f"Erreur de chargement des données : {e}")
         return
     
-    # Informations sur le dataset
-    st.sidebar.header("Informations du Dataset")
-    st.sidebar.write(f"Nombre total de formations : {len(df)}")
-    st.sidebar.write(f"Colonnes disponibles : {', '.join(df.columns)}")
-    
     # Champ de saisie pour le mot-clé
-    st.sidebar.header("Recherche de Formations")
-    keyword = st.sidebar.text_input("Entrez un mot-clé")
+    keyword = st.text_input("Entrez un mot-clé (exemple : data, cloud, AI, etc.)")
     
     # Bouton de recherche
-    if st.sidebar.button("Rechercher"):
+    if st.button("Rechercher"):
         if keyword:
-            # Rechercher les formations
             results = search_by_keyword(df, keyword)
-            
-            # Afficher les résultats
             if not results.empty:
                 st.success(f"✅ {len(results)} formation(s) trouvée(s) pour le mot-clé '{keyword}'")
                 st.dataframe(results)
@@ -76,14 +59,6 @@ def main():
                 st.warning(f"❌ Aucune formation trouvée pour le mot-clé '{keyword}'")
         else:
             st.warning("Veuillez saisir un mot-clé")
-    
-    # Section informative
-    st.sidebar.info("""
-    ### Comment utiliser l'application
-    - Saisissez un mot-clé dans le champ de recherche.
-    - La recherche se fait sur les colonnes binaires prétraitées.
-    - Les résultats sont affichés en temps réel dans la fenêtre principale.
-    """)
 
 # Exécuter l'application
 if __name__ == "__main__":
